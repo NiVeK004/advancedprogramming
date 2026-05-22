@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big-O Cheat Sheet & Quiz</title>
+    <style>
+        :root {
+            --bg: #f4f7f6;
+            --surface: #ffffff;
+            --text: #333333;
+            --primary: #4361ee;
+            --excellent: #2ecc71;
+            --good: #27ae60;
+            --fair: #f1c40f;
+            --bad: #e67e22;
+            --terrible: #e74c3c;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+        }
+        h1, h2, h3 { color: #2b2d42; }
+        h1 { text-align: center; border-bottom: 2px solid #edf2f4; padding-bottom: 10px; }
+        
+        /* Chart */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+        }
+        svg.chart {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th { background-color: #f8f9fa; font-weight: 600; }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: white;
+            font-size: 13px;
+        }
+        .c-1 { background-color: var(--excellent); }
+        .c-log { background-color: var(--good); }
+        .c-n { background-color: var(--fair); color: #333; }
+        .c-nlog { background-color: var(--bad); }
+        .c-n2 { background-color: var(--terrible); }
+
+        /* Quiz */
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-btn {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .option-btn:hover { border-color: var(--primary); background: #f0f4ff; }
+        .option-btn.correct { background: var(--excellent); color: white; border-color: var(--excellent); }
+        .option-btn.wrong { background: var(--terrible); color: white; border-color: var(--terrible); }
+        
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        
+        @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Big-O & Algorithm Mastery</h1>
+        <p style="text-align: center; color: #666;">A reference sheet and quiz tool to help you ace your INFO135 exam.</p>
+        
+        <h2>1. Visualizing Complexity</h2>
+        <div class="chart-container">
+            <svg viewBox="0 0 500 320" class="chart">
+                <!-- Grid Lines -->
+                <line x1="40" y1="280" x2="480" y2="280" stroke="#ccc" stroke-width="1"/>
+                <line x1="40" y1="280" x2="40" y2="20" stroke="#ccc" stroke-width="1"/>
+                <text x="250" y="310" fill="#666" text-anchor="middle">Elements (Input Size n)</text>
+                <text x="15" y="150" fill="#666" transform="rotate(-90 15,150)" text-anchor="middle">Operations</text>
+                
+                <!-- O(1) -->
+                <line x1="40" y1="260" x2="480" y2="260" stroke="#2ecc71" stroke-width="3"/>
+                <text x="440" y="250" fill="#2ecc71" font-weight="bold">O(1)</text>
+                
+                <!-- O(log n) -->
+                <path d="M40,280 Q 150,230 480,210" fill="none" stroke="#27ae60" stroke-width="3"/>
+                <text x="420" y="200" fill="#27ae60" font-weight="bold">O(log n)</text>
+                
+                <!-- O(n) -->
+                <line x1="40" y1="280" x2="300" y2="20" stroke="#f1c40f" stroke-width="3"/>
+                <text x="310" y="30" fill="#d4ac0d" font-weight="bold">O(n)</text>
+                
+                <!-- O(n log n) -->
+                <path d="M40,280 Q 150,210 220,20" fill="none" stroke="#e67e22" stroke-width="3"/>
+                <text x="230" y="30" fill="#e67e22" font-weight="bold">O(n log n)</text>
+                
+                <!-- O(n^2) -->
+                <path d="M40,280 Q 120,280 140,20" fill="none" stroke="#e74c3c" stroke-width="3"/>
+                <text x="150" y="30" fill="#e74c3c" font-weight="bold">O(n²)</text>
+            </svg>
+        </div>
+
+        <h2>2. Quick Cheat Sheet</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Algorithm / Structure</th>
+                    <th>Best Case</th>
+                    <th>Average Case</th>
+                    <th>Worst Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Linear Search</td>
+                    <td><span class="badge c-1">O(1)</span></td>
+                    <td><span class="badge c-n">O(n)</span></td>
+                    <td><span class="badge c-n">O(n)</span></td>
+                </tr>
+                <tr>
+                    <td>Binary Search</td>
+                    <td><span class="badge c-1">O(1)</span></td>
+                    <td><span class="badge c-log">O(log n)</span></td>
+                    <td><span class="badge c-log">O(log n)</span></td>
+                </tr>
+                <tr>
+                    <td>Bubble Sort</td>
+                    <td><span class="badge c-n">O(n)</span></td>
+                    <td><span class="badge c-n2">O(n²)</span></td>
+                    <td><span class="badge c-n2">O(n²)</span></td>
+                </tr>
+                <tr>
+                    <td>Merge Sort</td>
+                    <td><span class="badge c-nlog">O(n log n)</span></td>
+                    <td><span class="badge c-nlog">O(n log n)</span></td>
+                    <td><span class="badge c-nlog">O(n log n)</span></td>
+                </tr>
+                <tr>
+                    <td>Extract Max in Max-Heap</td>
+                    <td><span class="badge c-1">O(1)</span></td>
+                    <td><span class="badge c-log">O(log n)</span></td>
+                    <td><span class="badge c-log">O(log n)</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Practice Test</h2>
+        <div class="quiz-container" id="quiz">
+            <!-- Quiz injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "What is the expected (average) number of checks in a Linear Search for N elements?",
+                options: ["N", "(N+1)/2", "log(N)", "N^2"],
+                ans: 1,
+                explanation: "If the target is at index 1 it takes 1 check, if at index N it takes N checks. The average is (N+1)/2, which simplifies to O(n) time complexity."
+            },
+            {
+                q: "In a Max-Heap, what is the worst-case time complexity of extracting the maximum element?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+                ans: 2,
+                explanation: "The max element is at the root so finding it is O(1). However, removing it requires replacing the root with a leaf and 'sifting down' to restore heap property, taking O(log n) time."
+            },
+            {
+                q: "Why is Binary Search faster than Linear Search for large arrays?",
+                options: ["It bypasses the GIL.", "It divides the search space in half at each step.", "It uses extra memory to store results.", "It automatically sorts the array."],
+                ans: 1,
+                explanation: "Binary search checks the middle element and eliminates half of the remaining array every time, yielding a logarithmic O(log n) complexity."
+            },
+            {
+                q: "What is the best-case time complexity of Bubble Sort?",
+                options: ["O(1)", "O(n)", "O(n log n)", "O(n²)"],
+                ans: 1,
+                explanation: "If the array is already perfectly sorted, an optimized Bubble Sort will make one full pass without making any swaps and terminate. This takes O(n) time."
+            },
+            {
+                q: "If an algorithm's exact steps can be represented as T(n) = 3n + 5n log n + 10, what is its Big-O?",
+                options: ["O(n)", "O(10)", "O(n²)", "O(n log n)"],
+                ans: 3,
+                explanation: "In Big-O notation, we drop the constants and keep only the fastest growing term. n log n grows faster than n, so it dominates."
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz');
+
+        questions.forEach((item, qIdx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            const qTitle = document.createElement('h3');
+            qTitle.style.marginTop = '0';
+            qTitle.textContent = `${qIdx + 1}. ${item.q}`;
+            card.appendChild(qTitle);
+
+            const optionsGrid = document.createElement('div');
+            optionsGrid.className = 'options';
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+
+            item.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                
+                btn.onclick = function() {
+                    // Disable all buttons in this card
+                    const allBtns = optionsGrid.querySelectorAll('.option-btn');
+                    allBtns.forEach(b => {
+                        b.disabled = true;
+                        b.style.cursor = 'default';
+                    });
+
+                    if (optIdx === item.ans) {
+                        btn.classList.add('correct');
+                        feedback.style.color = 'var(--good)';
+                        feedback.innerHTML = `✅ Correct! ${item.explanation}`;
+                    } else {
+                        btn.classList.add('wrong');
+                        allBtns[item.ans].classList.add('correct');
+                        feedback.style.color = 'var(--terrible)';
+                        feedback.innerHTML = `❌ Incorrect. ${item.explanation}`;
+                    }
+                    feedback.classList.add('show');
+                };
+                optionsGrid.appendChild(btn);
+            });
+
+            card.appendChild(optionsGrid);
+            card.appendChild(feedback);
+            quizContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
