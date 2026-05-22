@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Traversal Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f8f9fa; color: #343a40; margin-top: 40px; }
+        svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .tree-wrapper { position: relative; width: 500px; height: 300px; margin: 0 auto; }
+        line { stroke: #adb5bd; stroke-width: 3; }
+        .node {
+            position: absolute; width: 44px; height: 44px; background: white; border: 3px solid #007bff;
+            border-radius: 50%; line-height: 44px; font-weight: bold; font-size: 18px; color: #007bff;
+            cursor: pointer; z-index: 2; transform: translate(-50%, -50%); transition: 0.2s;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+        }
+        .node:hover { background: #e9ecef; transform: translate(-50%, -50%) scale(1.1); }
+        .node.selected { background: #007bff; color: white; border-color: #0056b3; }
+        .info-panel { margin-top: 30px; font-size: 18px; }
+        .btn { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; color: white; transition: 0.2s; font-weight: bold;}
+        .btn-primary { background-color: #007bff; } .btn-primary:hover { background-color: #0056b3; }
+        .btn-secondary { background-color: #6c757d; } .btn-secondary:hover { background-color: #5a6268; }
+        .btn-success { background-color: #28a745; } .btn-success:hover { background-color: #218838; }
+        #message { font-weight: bold; margin-top: 15px; height: 24px; font-size: 20px;}
+        .correct { color: #28a745; } .incorrect { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <h2>Tree Traversal Quiz</h2>
+    <h3 id="taskDisplay">Task: Find the traversal</h3>
+
+    <div class="tree-wrapper">
+        <svg id="edges"></svg>
+        <div id="nodes"></div>
+    </div>
+
+    <div class="info-panel">
+        <p>Your Sequence: <strong id="userSequence">None</strong></p>
+        <button class="btn btn-primary" onclick="checkAnswer()">Submit Answer</button>
+        <button class="btn btn-secondary" onclick="clearSelection()">Clear Selection</button>
+        <button class="btn btn-success" onclick="generateLevel()">Next Question</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Coordinates for a balanced 7-node tree
+        const positions = [
+            {x: 250, y: 30},   // 0: Root
+            {x: 125, y: 120},  // 1: Left
+            {x: 375, y: 120},  // 2: Right
+            {x: 60, y: 220},   // 3: Left-Left
+            {x: 190, y: 220},  // 4: Left-Right
+            {x: 310, y: 220},  // 5: Right-Left
+            {x: 440, y: 220}   // 6: Right-Right
+        ];
+        const edges = [[0,1], [0,2], [1,3], [1,4], [2,5], [2,6]];
+        
+        let nodeValues = [];
+        let currentTask = "";
+        let userSelection = [];
+        let correctSelection = [];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateLevel() {
+            // Generate random node values
+            nodeValues = [10, 20, 30, 40, 50, 60, 70];
+            shuffle(nodeValues);
+
+            // Pick a traversal task
+            const tasks = ["Pre-order", "In-order", "Post-order"];
+            currentTask = tasks[Math.floor(Math.random() * tasks.length)];
+            document.getElementById('taskDisplay').innerText = `Task: Find the ${currentTask} traversal`;
+
+            // Calculate mathematically correct answers
+            if(currentTask === "Pre-order") correctSelection = [0,1,3,4,2,5,6].map(i => nodeValues[i]);
+            if(currentTask === "In-order") correctSelection = [3,1,4,0,5,2,6].map(i => nodeValues[i]);
+            if(currentTask === "Post-order") correctSelection = [3,4,1,5,6,2,0].map(i => nodeValues[i]);
+
+            renderTree();
+            clearSelection();
+            document.getElementById('message').innerText = "";
+        }
+
+        function renderTree() {
+            const svg = document.getElementById('edges');
+            const nodesContainer = document.getElementById('nodes');
+            svg.innerHTML = '';
+            nodesContainer.innerHTML = '';
+
+            // Draw connecting lines
+            edges.forEach(edge => {
+                let p1 = positions[edge[0]];
+                let p2 = positions[edge[1]];
+                svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}"></line>`;
+            });
+
+            // Draw clickable nodes
+            positions.forEach((p, i) => {
+                let val = nodeValues[i];
+                let nodeDiv = document.createElement('div');
+                nodeDiv.className = 'node';
+                nodeDiv.style.left = p.x + 'px';
+                nodeDiv.style.top = p.y + 'px';
+                nodeDiv.innerText = val;
+                nodeDiv.onclick = () => selectNode(nodeDiv, val);
+                nodesContainer.appendChild(nodeDiv);
+            });
+        }
+
+        function selectNode(element, val) {
+            if(element.classList.contains('selected')) return; // Prevent double-clicking
+            element.classList.add('selected');
+            userSelection.push(val);
+            document.getElementById('userSequence').innerText = userSelection.join(' → ');
+        }
+
+        function clearSelection() {
+            userSelection = [];
+            document.getElementById('userSequence').innerText = "None";
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            document.getElementById('message').innerText = "";
+        }
+
+        function checkAnswer() {
+            let msgDiv = document.getElementById('message');
+            if(userSelection.length !== 7) {
+                msgDiv.innerHTML = '<span class="incorrect">Please select all 7 nodes!</span>';
+                return;
+            }
+            
+            let isCorrect = userSelection.every((val, index) => val === correctSelection[index]);
+            if(isCorrect) {
+                msgDiv.innerHTML = '<span class="correct">🎉 Perfect! You nailed it.</span>';
+            } else {
+                msgDiv.innerHTML = `<span class="incorrect">Not quite. The correct sequence was: ${correctSelection.join(' → ')}</span>`;
+            }
+        }
+
+        // Start the first level
+        generateLevel();
+    </script>
+</body>
+</html>
