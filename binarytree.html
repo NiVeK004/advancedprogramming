@@ -138,7 +138,7 @@
             
             let isCorrect = userSelection.every((val, index) => val === correctSelection[index]);
             if(isCorrect) {
-                msgDiv.innerHTML = '<span class="correct">🎉 Perfect! You nailed it.</span>';
+                msgDiv.innerHTML = '<span class="correct">Perfect! You nailed it.</span>';
             } else {
                 msgDiv.innerHTML = `<span class="incorrect">Not quite. The correct sequence was: ${correctSelection.join(' → ')}</span>`;
             }
