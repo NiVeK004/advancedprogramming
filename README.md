@@ -6,7 +6,7 @@ I have set this up using the Live Server extention on VS Code, but you can also 
 To clarify:
 
 Method 1:
-Download the file and open it with your browser.
+Download the file and open it with your preferred browser.
 
 Method 2 (VS Code):
 Make sure the file is in a folder on your workspace, and that you have the Live Server extension installed.
